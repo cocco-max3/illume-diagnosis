@@ -355,7 +355,7 @@ function ResultCard({ problem, result }: { problem: string; result: ReturnType<t
     <div className="text-illume-pearl">
       <div
         ref={cardRef}
-        className="relative flex aspect-[9/16] min-h-[640px] flex-col justify-between overflow-hidden rounded-lg border border-illume-gold/[0.35] bg-[#0B1A2E] p-6"
+        className="relative flex min-h-[820px] flex-col justify-between overflow-hidden rounded-lg border border-illume-gold/[0.35] bg-[#0B1A2E] p-6"
       >
         <div className="absolute right-6 top-5 h-16 w-16 rounded-full bg-illume-gold/20 blur-2xl" />
         <div className="absolute right-8 top-8 h-2 w-2 rounded-full bg-illume-gold shadow-glow" />
@@ -368,12 +368,34 @@ function ResultCard({ problem, result }: { problem: string; result: ReturnType<t
           <p className="mt-3 text-xs font-semibold tracking-[0.18em] text-illume-gold">{today}</p>
           <h2 className="mt-8 text-3xl font-semibold leading-tight text-illume-pearl">{result.type}</h2>
           <p className="mt-5 text-base leading-8 text-illume-pearl">{result.summary}</p>
+
+          <div className="mt-6 rounded-md border border-white/[0.08] bg-white/[0.04] px-4 py-4">
+            <p className="text-xs font-semibold tracking-[0.16em] text-illume-gold">状態の翻訳</p>
+            <p className="mt-3 text-sm leading-7 text-illume-pearl/90">{result.stateTranslation}</p>
+          </div>
+
+          <div className="mt-5">
+            <p className="text-xs font-semibold tracking-[0.16em] text-illume-gold">よくある行動</p>
+            <ul className="mt-3 space-y-2">
+              {result.commonActions.map((item) => (
+                <li key={item} className="flex gap-2 text-sm leading-6 text-illume-pearl/90">
+                  <span className="text-illume-gold">✓</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         <div className="relative">
           <div className="border-l-2 border-illume-gold pl-4">
             <p className="text-xs font-semibold tracking-[0.18em] text-illume-gold">今日の小さな灯り</p>
             <p className="mt-2 text-lg font-semibold leading-8 text-illume-pearl">{result.nextAction}</p>
+          </div>
+
+          <div className="mt-5 rounded-md border border-illume-gold/[0.2] bg-[#071426]/70 px-4 py-4">
+            <p className="text-xs font-semibold tracking-[0.16em] text-illume-gold">今必要なのは</p>
+            <p className="mt-2 text-sm leading-7 text-illume-pearl/90">{result.needNow}</p>
           </div>
 
           <div className="mt-6 rounded-md border border-illume-gold/[0.28] bg-illume-gold/10 px-4 py-4">

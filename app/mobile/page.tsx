@@ -1,56 +1,6 @@
-import { questions } from "@/lib/diagnosis";
+import { questions, resultMap } from "@/lib/diagnosis";
 
-const results = {
-  info: {
-    type: "情報過多タイプ",
-    summary: "足りないのは情報ではなく、情報を閉じる基準です。",
-    nextAction: "追加で調べる前に、今ある情報だけで仮の結論を1行にしてください。",
-    reassurance: "もう十分に集めています。今日は、少し閉じても大丈夫です。",
-    lightLine: "光を増やすより、見る窓をひとつに絞る。"
-  },
-  decision: {
-    type: "判断過多タイプ",
-    summary: "正解探しが長くなり、試す前の比較に体力を使っています。",
-    nextAction: "判断基準を2つだけ決め、満たしたものを24時間だけ採用してください。",
-    reassurance: "今すぐ正解にたどり着かなくても、仮決めから整えていけます。",
-    lightLine: "決断は扉ではなく、仮の灯りでもいい。"
-  },
-  steps: {
-    type: "手順不明タイプ",
-    summary: "目標は見えていますが、最初の足場がまだ粗い状態です。",
-    nextAction: "完成形ではなく、5分でできる最初の動作に分解してください。",
-    reassurance: "見えていないのは能力ではなく、最初の足場だけです。",
-    lightLine: "道は歩く前に全部光らなくていい。"
-  },
-  emotion: {
-    type: "感情ブレーキタイプ",
-    summary: "やり方よりも、失敗時の痛みを避ける力が強く働いています。",
-    nextAction: "人に見せない前提で、失敗しても問題ない最小版を作ってください。",
-    reassurance: "止まっていた時間も、ちゃんと自分を守ろうとしていた時間です。",
-    lightLine: "怖さは敵ではなく、照らす順番を教える影です。"
-  },
-  noise: {
-    type: "環境ノイズタイプ",
-    summary: "意志の問題ではなく、集中を削る条件が多すぎます。",
-    nextAction: "15分だけ通知と割り込みを切り、作業場所を一段静かにしてください。",
-    reassurance: "集中できない日があるのは、あなたの意志が弱いからではありません。",
-    lightLine: "静けさは贅沢ではなく、考えるための足場です。"
-  },
-  perfect: {
-    type: "完璧主義ロックタイプ",
-    summary: "完成度の基準が高すぎて、試作品を出す前に固まっています。",
-    nextAction: "60点版を明示して、直すための素材として一度外に出してください。",
-    reassurance: "粗いまま出しても、あなたの価値が粗くなるわけではありません。",
-    lightLine: "未完成は失敗ではなく、光を入れる余白です。"
-  },
-  priority: {
-    type: "優先順位迷子タイプ",
-    summary: "タスク量に視界を奪われ、次の一点がぼやけています。",
-    nextAction: "締切、影響、重さの3軸で並べ、最も軽く影響が出るものから触ってください。",
-    reassurance: "全部を今日抱えなくても、ひとつ選べたら前に進んでいます。",
-    lightLine: "全部を照らすより、次の一歩だけ明るければ進めます。"
-  }
-};
+const results = resultMap;
 
 const mobileCss = `
 html,body{margin:0;background:#071426!important}
@@ -75,9 +25,10 @@ body{overscroll-behavior:none}
 .nav{display:flex;gap:12px;margin-top:20px}.nav button{flex:1;min-height:44px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(255,255,255,.04);color:#C9CDD3!important;font-size:13px;font-weight:700}.nav button:disabled{opacity:.35}
 .bottom{margin-top:auto;padding-top:30px}.light{width:100%;min-height:56px;border:0;border-radius:999px;background:#E8D7A5;color:#071426!important;font-size:15px;font-weight:800;box-shadow:0 0 34px rgba(232,215,165,.24)}
 .wait{margin:0;text-align:center;color:rgba(201,205,211,.68)!important;font-size:12px;line-height:1.9}
-.hide{display:none!important}.result{display:flex;aspect-ratio:9/16;flex-direction:column;justify-content:space-between;overflow:hidden;margin-top:24px;border:1px solid rgba(232,215,165,.3);border-radius:22px;background:#0B1A2E;padding:24px}
-.rt{margin:36px 0 0;color:#F5F3EE!important;font-size:30px;font-weight:700;line-height:1.3}.rs,.ra{color:#F5F3EE!important;font-size:16px;line-height:1.85}.rs{margin:20px 0 0}.block{border-left:2px solid #E8D7A5;padding-left:16px}.sl{margin:0;color:#E8D7A5!important;font-size:12px;font-weight:700;letter-spacing:.16em!important}.ra{margin:12px 0 0;font-weight:700}
-.re{margin-top:24px;border:1px solid rgba(232,215,165,.25);border-radius:16px;background:rgba(232,215,165,.1);padding:16px}.re p,.ll{color:#E8D7A5!important}.re p{margin:0;font-size:16px;font-weight:700;line-height:1.85}.ll{margin:20px 0 0;font-size:14px;font-style:italic;line-height:1.8}
+.hide{display:none!important}.result{display:block;min-height:880px;overflow:hidden;margin-top:24px;border:1px solid rgba(232,215,165,.3);border-radius:22px;background:#0B1A2E;padding:24px}
+.rt{margin:34px 0 0;color:#F5F3EE!important;font-size:30px;font-weight:700;line-height:1.3}.rs,.ra,.tr,.need p{color:#F5F3EE!important;font-size:15px;line-height:1.85}.rs{margin:18px 0 0}.trbox{margin-top:22px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(255,255,255,.04);padding:15px}.tr{margin:10px 0 0;color:rgba(245,243,238,.9)!important}
+.checks{margin-top:20px}.checks ul{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}.checks li{color:rgba(245,243,238,.9)!important;font-size:14px;line-height:1.65}.checks li::before{content:"✓";color:#E8D7A5;margin-right:8px}.block{margin-top:26px;border-left:2px solid #E8D7A5;padding-left:16px}.sl{margin:0;color:#E8D7A5!important;font-size:12px;font-weight:700;letter-spacing:.16em!important}.ra{margin:12px 0 0;font-weight:700}
+.need{margin-top:20px;border:1px solid rgba(232,215,165,.18);border-radius:16px;background:rgba(7,20,38,.7);padding:15px}.need p{margin:10px 0 0;color:rgba(245,243,238,.9)!important}.re{margin-top:22px;border:1px solid rgba(232,215,165,.25);border-radius:16px;background:rgba(232,215,165,.1);padding:16px}.re p,.ll{color:#E8D7A5!important}.re p{margin:0;font-size:15px;font-weight:700;line-height:1.85}.ll{margin:18px 0 0;font-size:13px;font-style:italic;line-height:1.8}
 .help{padding:18px}.save,.reset{width:100%;min-height:48px;border-radius:999px;font-size:14px;font-weight:800}.save{margin-top:16px;border:1px solid rgba(232,215,165,.36);background:transparent;color:#E8D7A5!important}.reset{margin-top:16px;border:0;background:rgba(255,255,255,.05);color:#C9CDD3!important}
 `;
 
@@ -154,7 +105,16 @@ const mobileJs = `
     result.classList.remove('hide');
     document.getElementById('rtype').textContent = r.type;
     document.getElementById('rsummary').textContent = r.summary;
+    document.getElementById('rtranslation').textContent = r.stateTranslation;
+    const common = document.getElementById('rcommon');
+    common.textContent = '';
+    r.commonActions.forEach((item) => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      common.appendChild(li);
+    });
     document.getElementById('raction').textContent = r.nextAction;
+    document.getElementById('rneed').textContent = r.needNow;
     document.getElementById('rre').textContent = r.reassurance;
     document.getElementById('rline').textContent = r.lightLine;
     document.getElementById('date').textContent = new Intl.DateTimeFormat('ja-JP', {year:'numeric', month:'long', day:'numeric'}).format(new Date());
@@ -171,9 +131,14 @@ const mobileJs = `
     x.fillStyle = '#E8D7A5'; x.font = '700 34px sans-serif'; x.fillText(document.getElementById('date').textContent, 90, 205);
     x.fillStyle = '#F5F3EE'; x.font = '700 68px sans-serif'; wrap(x, document.getElementById('rtype').textContent, 90, 360, 900, 82);
     x.font = '500 42px sans-serif'; wrap(x, document.getElementById('rsummary').textContent, 90, 560, 900, 64);
-    x.fillStyle = '#E8D7A5'; x.font = '700 34px sans-serif'; x.fillText('今日の小さな灯り', 90, 910);
-    x.fillStyle = '#F5F3EE'; x.font = '700 44px sans-serif'; wrap(x, document.getElementById('raction').textContent, 90, 1000, 900, 68);
-    x.fillStyle = '#E8D7A5'; x.font = '700 42px sans-serif'; wrap(x, document.getElementById('rre').textContent, 90, 1370, 900, 68);
+    x.fillStyle = '#E8D7A5'; x.font = '700 30px sans-serif'; x.fillText('状態の翻訳', 90, 740);
+    x.fillStyle = '#F5F3EE'; x.font = '500 34px sans-serif'; wrap(x, document.getElementById('rtranslation').textContent, 90, 810, 900, 54);
+    x.fillStyle = '#E8D7A5'; x.font = '700 30px sans-serif'; x.fillText('よくある行動', 90, 1080);
+    x.fillStyle = '#F5F3EE'; x.font = '500 32px sans-serif';
+    Array.from(document.querySelectorAll('#rcommon li')).slice(0, 3).forEach((li, i) => x.fillText('✓ ' + li.textContent, 90, 1140 + i * 50));
+    x.fillStyle = '#E8D7A5'; x.font = '700 34px sans-serif'; x.fillText('今日の小さな灯り', 90, 1340);
+    x.fillStyle = '#F5F3EE'; x.font = '700 38px sans-serif'; wrap(x, document.getElementById('raction').textContent, 90, 1410, 900, 58);
+    x.fillStyle = '#E8D7A5'; x.font = '700 36px sans-serif'; wrap(x, document.getElementById('rre').textContent, 90, 1710, 900, 58);
     const url = c.toDataURL('image/png');
     document.getElementById('preview').src = url;
     document.getElementById('preview').classList.remove('hide');
@@ -268,11 +233,23 @@ export default function MobilePage() {
               <p id="date" className="label" style={{ marginTop: 12 }} />
               <h1 id="rtype" className="rt" />
               <p id="rsummary" className="rs" />
+              <div className="trbox">
+                <p className="sl">状態の翻訳</p>
+                <p id="rtranslation" className="tr" />
+              </div>
+              <div className="checks">
+                <p className="sl">よくある行動</p>
+                <ul id="rcommon" />
+              </div>
             </div>
             <div>
               <div className="block">
                 <p className="sl">今日の小さな灯り</p>
                 <p id="raction" className="ra" />
+              </div>
+              <div className="need">
+                <p className="sl">今必要なのは</p>
+                <p id="rneed" />
               </div>
               <div className="re"><p id="rre" /></div>
               <p id="rline" className="ll" />

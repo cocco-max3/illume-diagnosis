@@ -173,7 +173,7 @@ export default function Home() {
             <div className="mx-auto min-h-[680px] w-full max-w-[440px] overflow-hidden rounded-lg border border-white/[0.12] bg-illume-ink shadow-2xl">
             <div className="relative flex h-full flex-col justify-between p-7">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_24%,rgba(232,215,165,0.22),transparent_18rem)]" />
-              <div className="absolute left-1/2 top-0 h-full w-2 -translate-x-1/2 rotate-[18deg] bg-gradient-to-b from-transparent via-illume-gold/80 to-transparent blur-sm" />
+              <div className="absolute left-1/2 top-0 h-full w-2 -translate-x-1/2 rotate-[18deg] bg-gradient-to-b from-transparent via-illume-gold/65 to-transparent blur-sm" />
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#030812] to-transparent" />
               <div className="relative">
                 <p className="text-xs font-semibold uppercase tracking-[0.28em] text-illume-moonblue">Quiet resonance</p>
@@ -377,7 +377,7 @@ function ResultCard({ problem, result }: { problem: string; result: ReturnType<t
       >
         <div className="absolute right-6 top-5 h-16 w-16 rounded-full bg-illume-gold/20 blur-2xl" />
         <div className="absolute right-8 top-8 h-2 w-2 rounded-full bg-illume-gold shadow-glow" />
-        <div className="absolute left-[62%] top-0 h-full w-2 rotate-[18deg] bg-gradient-to-b from-transparent via-illume-gold/[0.35] to-transparent blur-sm" />
+        <div className="absolute left-1/2 top-0 h-full w-2 -translate-x-1/2 rotate-[18deg] bg-gradient-to-b from-transparent via-illume-gold/[0.35] to-transparent blur-sm" />
 
         <div className="relative">
           <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-illume-moonblue">

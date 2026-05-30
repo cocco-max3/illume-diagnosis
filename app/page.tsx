@@ -177,7 +177,7 @@ export default function Home() {
               <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#030812] to-transparent" />
               <div className="relative">
                 <p className="text-xs font-semibold uppercase tracking-[0.28em] text-illume-moonblue">Quiet resonance</p>
-                <h2 className="mt-4 text-3xl font-semibold leading-tight text-white">
+                <h2 className="mt-4 max-w-[15rem] text-xl font-semibold leading-snug text-white/90">
                   A small light for the next step.
                 </h2>
               </div>

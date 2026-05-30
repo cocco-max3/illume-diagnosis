@@ -10,7 +10,7 @@ body{overscroll-behavior:none}
 .wrap{position:relative;width:100%;max-width:430px;min-height:100svh;margin:0 auto;padding:34px 20px 28px;display:flex;flex-direction:column}
 .glow{position:absolute;right:26px;top:30px;width:96px;height:96px;border-radius:999px;background:radial-gradient(circle,rgba(232,215,165,.34),rgba(232,215,165,.08) 58%,transparent 72%);pointer-events:none}
 .dot{position:absolute;right:60px;top:68px;width:8px;height:8px;border-radius:999px;background:#E8D7A5;box-shadow:0 0 30px rgba(232,215,165,.5)}
-.line{position:absolute;left:64%;top:0;width:1px;height:100%;transform:rotate(18deg);background:linear-gradient(to bottom,transparent,rgba(232,215,165,.34),transparent)}
+.line{position:absolute;right:64px;top:72px;width:1px;height:calc(100% - 72px);transform-origin:top center;transform:rotate(13deg);background:linear-gradient(to bottom,rgba(232,215,165,.28),rgba(232,215,165,.2),transparent);opacity:.75}
 .k{position:relative;margin:0;color:#6F86A3!important;font-size:11px;font-weight:700;line-height:1.2;text-transform:uppercase;letter-spacing:.28em!important}
 .hero{position:relative;margin-top:56px}.label{margin:0;color:#E8D7A5!important;font-size:12px;font-weight:700;line-height:1.4;letter-spacing:.16em!important}
 .h{margin:16px 0 0;color:#F5F3EE!important;font-size:30px;font-weight:700;line-height:1.38}.copy{margin:20px 0 0;max-width:21rem;color:#C9CDD3!important;font-size:14px;line-height:1.95}

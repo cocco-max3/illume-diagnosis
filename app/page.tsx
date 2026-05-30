@@ -3,9 +3,9 @@
 import { useMemo, useRef, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { toPng } from "html-to-image";
-import { AnswerKey, diagnose, questions } from "@/lib/diagnosis";
+import { diagnose, questions } from "@/lib/diagnosis";
 
-type Answers = Partial<Record<AnswerKey, number>>;
+type Answers = Partial<Record<string, number>>;
 
 const privacyItems = ["APIなし", "外部送信なし", "保存なし", "HTML描画なし"];
 
@@ -146,7 +146,7 @@ export default function Home() {
             </button>
             {!isComplete && (
               <p className="complete-note w-full text-xs leading-6 text-illume-blue">
-                入力と7つの質問がそろうと、灯りを出せます。
+                入力と{questions.length}個の質問がそろうと、灯りを出せます。
                 {problem.trim().length === 0 ? "まず一言だけ入力してください。" : `あと${questions.length - answeredCount}問です。`}
               </p>
             )}
@@ -210,7 +210,7 @@ function MobileFlow({
   const question = questions[currentQuestion];
   const canAnswer = problem.trim().length > 0;
 
-  function chooseAnswer(id: AnswerKey, value: number) {
+  function chooseAnswer(id: string, value: number) {
     setAnswers((current) => ({ ...current, [id]: value }));
     if (currentQuestion < questions.length - 1) {
       window.setTimeout(() => setCurrentQuestion((current) => Math.min(current + 1, questions.length - 1)), 220);
@@ -249,7 +249,9 @@ function MobileFlow({
       {canAnswer && !submitted && (
         <section className="mobile-question-card">
           <div className="mobile-progress-row">
-            <span>{String(currentQuestion + 1).padStart(2, "0")} / 07</span>
+            <span>
+              {String(currentQuestion + 1).padStart(2, "0")} / {String(questions.length).padStart(2, "0")}
+            </span>
             <span>{answeredCount} answered</span>
           </div>
           <div className="mobile-progress-track">
@@ -355,7 +357,7 @@ function ResultCard({ problem, result }: { problem: string; result: ReturnType<t
     <div className="text-illume-pearl">
       <div
         ref={cardRef}
-        className="relative flex min-h-[820px] flex-col justify-between overflow-hidden rounded-lg border border-illume-gold/[0.35] bg-[#0B1A2E] p-6"
+        className="relative flex min-h-[1040px] flex-col justify-between overflow-hidden rounded-lg border border-illume-gold/[0.35] bg-[#0B1A2E] p-6"
       >
         <div className="absolute right-6 top-5 h-16 w-16 rounded-full bg-illume-gold/20 blur-2xl" />
         <div className="absolute right-8 top-8 h-2 w-2 rounded-full bg-illume-gold shadow-glow" />
@@ -368,6 +370,11 @@ function ResultCard({ problem, result }: { problem: string; result: ReturnType<t
           <p className="mt-3 text-xs font-semibold tracking-[0.18em] text-illume-gold">{today}</p>
           <h2 className="mt-8 text-3xl font-semibold leading-tight text-illume-pearl">{result.type}</h2>
           <p className="mt-5 text-base leading-8 text-illume-pearl">{result.summary}</p>
+
+          <div className="mt-5 rounded-md border border-illume-gold/[0.18] bg-illume-gold/[0.08] px-4 py-4">
+            <p className="text-xs font-semibold tracking-[0.16em] text-illume-gold">入力から見えたこと</p>
+            <p className="mt-3 text-sm leading-7 text-illume-pearl/90">{result.inputReflection}</p>
+          </div>
 
           <div className="mt-6 rounded-md border border-white/[0.08] bg-white/[0.04] px-4 py-4">
             <p className="text-xs font-semibold tracking-[0.16em] text-illume-gold">状態の翻訳</p>
@@ -396,6 +403,11 @@ function ResultCard({ problem, result }: { problem: string; result: ReturnType<t
           <div className="mt-5 rounded-md border border-illume-gold/[0.2] bg-[#071426]/70 px-4 py-4">
             <p className="text-xs font-semibold tracking-[0.16em] text-illume-gold">今必要なのは</p>
             <p className="mt-2 text-sm leading-7 text-illume-pearl/90">{result.needNow}</p>
+          </div>
+
+          <div className="mt-5 rounded-md border border-white/[0.08] bg-white/[0.04] px-4 py-4">
+            <p className="text-xs font-semibold tracking-[0.16em] text-illume-gold">静かな問い</p>
+            <p className="mt-2 text-sm leading-7 text-illume-pearl/90">{result.quietQuestion}</p>
           </div>
 
           <div className="mt-6 rounded-md border border-illume-gold/[0.28] bg-illume-gold/10 px-4 py-4">

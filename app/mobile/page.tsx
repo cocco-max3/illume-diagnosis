@@ -25,7 +25,7 @@ body{overscroll-behavior:none}
 .nav{display:flex;gap:12px;margin-top:20px}.nav button{flex:1;min-height:44px;border:1px solid rgba(255,255,255,.1);border-radius:999px;background:rgba(255,255,255,.04);color:#C9CDD3!important;font-size:13px;font-weight:700}.nav button:disabled{opacity:.35}
 .bottom{margin-top:auto;padding-top:30px}.light{width:100%;min-height:56px;border:0;border-radius:999px;background:#E8D7A5;color:#071426!important;font-size:15px;font-weight:800;box-shadow:0 0 34px rgba(232,215,165,.24)}
 .wait{margin:0;text-align:center;color:rgba(201,205,211,.68)!important;font-size:12px;line-height:1.9}
-.hide{display:none!important}.result{display:block;min-height:880px;overflow:hidden;margin-top:24px;border:1px solid rgba(232,215,165,.3);border-radius:22px;background:#0B1A2E;padding:24px}
+.hide{display:none!important}.result{display:block;min-height:1080px;overflow:hidden;margin-top:24px;border:1px solid rgba(232,215,165,.3);border-radius:22px;background:#0B1A2E;padding:24px}
 .rt{margin:34px 0 0;color:#F5F3EE!important;font-size:30px;font-weight:700;line-height:1.3}.rs,.ra,.tr,.need p{color:#F5F3EE!important;font-size:15px;line-height:1.85}.rs{margin:18px 0 0}.trbox{margin-top:22px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(255,255,255,.04);padding:15px}.tr{margin:10px 0 0;color:rgba(245,243,238,.9)!important}
 .checks{margin-top:20px}.checks ul{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}.checks li{color:rgba(245,243,238,.9)!important;font-size:14px;line-height:1.65}.checks li::before{content:"✓";color:#E8D7A5;margin-right:8px}.block{margin-top:26px;border-left:2px solid #E8D7A5;padding-left:16px}.sl{margin:0;color:#E8D7A5!important;font-size:12px;font-weight:700;letter-spacing:.16em!important}.ra{margin:12px 0 0;font-weight:700}
 .need{margin-top:20px;border:1px solid rgba(232,215,165,.18);border-radius:16px;background:rgba(7,20,38,.7);padding:15px}.need p{margin:10px 0 0;color:rgba(245,243,238,.9)!important}.re{margin-top:22px;border:1px solid rgba(232,215,165,.25);border-radius:16px;background:rgba(232,215,165,.1);padding:16px}.re p,.ll{color:#E8D7A5!important}.re p{margin:0;font-size:15px;font-weight:700;line-height:1.85}.ll{margin:18px 0 0;font-size:13px;font-style:italic;line-height:1.8}
@@ -36,7 +36,7 @@ const mobileJs = `
 (() => {
   const qs = ${JSON.stringify(questions)};
   const results = ${JSON.stringify(results)};
-  const scores = {info:0,decision:0,steps:0,emotion:0,noise:0,perfect:0,priority:0};
+  const scores = {info:0,decision:0,steps:0,emotion:0,noise:0,perfect:0,priority:0,expectation:0,holding:0,aiFatigue:0};
   let current = 0;
   let answers = {};
   const problem = document.getElementById('problem');
@@ -59,7 +59,7 @@ const mobileJs = `
     if (!hasProblem) return;
     const q = qs[current];
     qtext.textContent = q.text;
-    count.textContent = String(current + 1).padStart(2, '0') + ' / 07';
+    count.textContent = String(current + 1).padStart(2, '0') + ' / ' + String(qs.length).padStart(2, '0');
     bar.style.width = (((current + 1) / qs.length) * 100) + '%';
     ans.textContent = '';
     q.options.forEach((o) => {
@@ -84,7 +84,8 @@ const mobileJs = `
   }
 
   function diagnose() {
-    Object.keys(scores).forEach((k) => scores[k] = answers[k] || 0);
+    Object.keys(scores).forEach((k) => scores[k] = 0);
+    qs.forEach((q) => { scores[q.key] += answers[q.id] || 0; });
     const text = problem.value.toLowerCase();
     const kw = {
       info:['調べ','情報','記事','動画','講座','比較','ai疲れ'],
@@ -93,10 +94,28 @@ const mobileJs = `
       emotion:['怖','不安','恥','失敗','自信','緊張'],
       noise:['通知','忙','時間がない','集中','邪魔','疲'],
       perfect:['完璧','ちゃんと','まだ出せ','品質','納得'],
-      priority:['優先','多すぎ','タスク','どれから','全部','整理']
+      priority:['優先','多すぎ','タスク','どれから','全部','整理'],
+      expectation:['期待','応え','評価','がっかり','ちゃんとしなきゃ','責任','プレッシャー'],
+      holding:['抱え','任せ','頼れ','相談','全部自分','手放','依頼'],
+      aiFatigue:['ai','AI','chatgpt','ChatGPT','プロンプト','ツール','生成','回答が多']
     };
     Object.entries(kw).forEach(([k, list]) => list.forEach((w) => { if (text.includes(w.toLowerCase())) scores[k] += 1; }));
-    return ['emotion','noise','steps','priority','decision','perfect','info'].reduce((best,k) => scores[k] > scores[best] ? k : best, 'steps');
+    return ['emotion','expectation','holding','aiFatigue','noise','steps','priority','decision','perfect','info'].reduce((best,k) => scores[k] > scores[best] ? k : best, 'steps');
+  }
+
+  function inputReflection(r) {
+    const cleaned = problem.value.replace(/\\s+/g, ' ').trim();
+    if (!cleaned) return 'まだ言葉になりきっていない詰まりを、ここに少しだけ置こうとしている状態です。';
+    const clipped = cleaned.length > 42 ? cleaned.slice(0, 42) + '...' : cleaned;
+    return '入力してくれた「' + clipped + '」には、' + r.summary + 'という流れが少し見えています。まずは全部を説明しきらなくて大丈夫です。';
+  }
+
+  function quietQuestion(r) {
+    if (r.type === '感情ブレーキタイプ') return 'もし誰にも見せなくていいなら、最初に少しだけ置けそうなものは何でしょう。';
+    if (r.type === '情報過多タイプ' || r.type === 'AI疲れタイプ') return 'これ以上増やす前に、今あるものの中で一番軽く閉じられるものは何でしょう。';
+    if (r.type === '抱え込み停止タイプ') return '全部ではなく、確認だけ誰かに渡せる部分はどこでしょう。';
+    if (r.type === '期待疲労タイプ') return '期待に応える前に、自分の現在地として認めてもいいことは何でしょう。';
+    return '今の自分に、いちばん小さく渡せる一手は何でしょう。';
   }
 
   function showResult() {
@@ -105,6 +124,7 @@ const mobileJs = `
     result.classList.remove('hide');
     document.getElementById('rtype').textContent = r.type;
     document.getElementById('rsummary').textContent = r.summary;
+    document.getElementById('rinput').textContent = inputReflection(r);
     document.getElementById('rtranslation').textContent = r.stateTranslation;
     const common = document.getElementById('rcommon');
     common.textContent = '';
@@ -115,6 +135,7 @@ const mobileJs = `
     });
     document.getElementById('raction').textContent = r.nextAction;
     document.getElementById('rneed').textContent = r.needNow;
+    document.getElementById('rquestion').textContent = quietQuestion(r);
     document.getElementById('rre').textContent = r.reassurance;
     document.getElementById('rline').textContent = r.lightLine;
     document.getElementById('date').textContent = new Intl.DateTimeFormat('ja-JP', {year:'numeric', month:'long', day:'numeric'}).format(new Date());
@@ -131,14 +152,16 @@ const mobileJs = `
     x.fillStyle = '#E8D7A5'; x.font = '700 34px sans-serif'; x.fillText(document.getElementById('date').textContent, 90, 205);
     x.fillStyle = '#F5F3EE'; x.font = '700 68px sans-serif'; wrap(x, document.getElementById('rtype').textContent, 90, 360, 900, 82);
     x.font = '500 42px sans-serif'; wrap(x, document.getElementById('rsummary').textContent, 90, 560, 900, 64);
-    x.fillStyle = '#E8D7A5'; x.font = '700 30px sans-serif'; x.fillText('状態の翻訳', 90, 740);
-    x.fillStyle = '#F5F3EE'; x.font = '500 34px sans-serif'; wrap(x, document.getElementById('rtranslation').textContent, 90, 810, 900, 54);
-    x.fillStyle = '#E8D7A5'; x.font = '700 30px sans-serif'; x.fillText('よくある行動', 90, 1080);
+    x.fillStyle = '#E8D7A5'; x.font = '700 30px sans-serif'; x.fillText('入力から見えたこと', 90, 720);
+    x.fillStyle = '#F5F3EE'; x.font = '500 31px sans-serif'; wrap(x, document.getElementById('rinput').textContent, 90, 780, 900, 48);
+    x.fillStyle = '#E8D7A5'; x.font = '700 30px sans-serif'; x.fillText('状態の翻訳', 90, 1010);
+    x.fillStyle = '#F5F3EE'; x.font = '500 31px sans-serif'; wrap(x, document.getElementById('rtranslation').textContent, 90, 1070, 900, 48);
+    x.fillStyle = '#E8D7A5'; x.font = '700 30px sans-serif'; x.fillText('よくある行動', 90, 1280);
     x.fillStyle = '#F5F3EE'; x.font = '500 32px sans-serif';
-    Array.from(document.querySelectorAll('#rcommon li')).slice(0, 3).forEach((li, i) => x.fillText('✓ ' + li.textContent, 90, 1140 + i * 50));
-    x.fillStyle = '#E8D7A5'; x.font = '700 34px sans-serif'; x.fillText('今日の小さな灯り', 90, 1340);
-    x.fillStyle = '#F5F3EE'; x.font = '700 38px sans-serif'; wrap(x, document.getElementById('raction').textContent, 90, 1410, 900, 58);
-    x.fillStyle = '#E8D7A5'; x.font = '700 36px sans-serif'; wrap(x, document.getElementById('rre').textContent, 90, 1710, 900, 58);
+    Array.from(document.querySelectorAll('#rcommon li')).slice(0, 3).forEach((li, i) => x.fillText('✓ ' + li.textContent, 90, 1340 + i * 48));
+    x.fillStyle = '#E8D7A5'; x.font = '700 34px sans-serif'; x.fillText('今日の小さな灯り', 90, 1510);
+    x.fillStyle = '#F5F3EE'; x.font = '700 34px sans-serif'; wrap(x, document.getElementById('raction').textContent, 90, 1575, 900, 50);
+    x.fillStyle = '#E8D7A5'; x.font = '700 32px sans-serif'; wrap(x, document.getElementById('rre').textContent, 90, 1810, 900, 48);
     const url = c.toDataURL('image/png');
     document.getElementById('preview').src = url;
     document.getElementById('preview').classList.remove('hide');
@@ -209,7 +232,7 @@ export default function MobilePage() {
           </section>
 
           <section id="qbox" className="q hide">
-            <div className="pr"><span id="count">01 / 07</span><span>one breath</span></div>
+            <div className="pr"><span id="count">01 / 15</span><span>one breath</span></div>
             <div className="track"><div id="bar" className="bar" /></div>
             <p id="qtext" className="qt" />
             <div id="answers" className="answers" />
@@ -234,6 +257,10 @@ export default function MobilePage() {
               <h1 id="rtype" className="rt" />
               <p id="rsummary" className="rs" />
               <div className="trbox">
+                <p className="sl">入力から見えたこと</p>
+                <p id="rinput" className="tr" />
+              </div>
+              <div className="trbox">
                 <p className="sl">状態の翻訳</p>
                 <p id="rtranslation" className="tr" />
               </div>
@@ -250,6 +277,10 @@ export default function MobilePage() {
               <div className="need">
                 <p className="sl">今必要なのは</p>
                 <p id="rneed" />
+              </div>
+              <div className="need">
+                <p className="sl">静かな問い</p>
+                <p id="rquestion" />
               </div>
               <div className="re"><p id="rre" /></div>
               <p id="rline" className="ll" />

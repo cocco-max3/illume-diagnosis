@@ -5,7 +5,10 @@ export type DiagnosisType =
   | "感情ブレーキタイプ"
   | "環境ノイズタイプ"
   | "完璧主義ロックタイプ"
-  | "優先順位迷子タイプ";
+  | "優先順位迷子タイプ"
+  | "期待疲労タイプ"
+  | "抱え込み停止タイプ"
+  | "AI疲れタイプ";
 
 export type AnswerKey =
   | "info"
@@ -14,10 +17,14 @@ export type AnswerKey =
   | "emotion"
   | "noise"
   | "perfect"
-  | "priority";
+  | "priority"
+  | "expectation"
+  | "holding"
+  | "aiFatigue";
 
 export type Question = {
-  id: AnswerKey;
+  id: string;
+  key: AnswerKey;
   text: string;
   options: Array<{
     label: string;
@@ -38,67 +45,159 @@ export type DiagnosisResult = {
   reassurance: string;
 };
 
+export type PersonalizedDiagnosis = DiagnosisResult & {
+  inputReflection: string;
+  quietQuestion: string;
+};
+
 export const questions: Question[] = [
   {
-    id: "info",
-    text: "調べるほど選択肢や情報が増えて、動きにくくなっていますか？",
+    id: "info-overload",
+    key: "info",
+    text: "調べるほど安心するより、頭の中がさらに散らかっていく感じがありますか？",
     options: [
-      { label: "かなり当てはまる", value: 3 },
-      { label: "少し当てはまる", value: 2 },
+      { label: "かなりある", value: 3 },
+      { label: "少しある", value: 2 },
+      { label: "今は薄い", value: 0 }
+    ]
+  },
+  {
+    id: "decision-regret",
+    key: "decision",
+    text: "選んだ後に後悔しそうで、決める直前に手が止まりますか？",
+    options: [
+      { label: "かなり止まる", value: 3 },
+      { label: "少し止まる", value: 2 },
       { label: "あまりない", value: 0 }
     ]
   },
   {
-    id: "decision",
-    text: "正解を選ぼうとして、比較や検討が長引いていますか？",
+    id: "steps-first",
+    key: "steps",
+    text: "全体像よりも、「まず何を開くか」「何を置くか」が見えない感じですか？",
     options: [
-      { label: "かなり当てはまる", value: 3 },
-      { label: "少し当てはまる", value: 2 },
+      { label: "かなり見えない", value: 3 },
+      { label: "少し見えない", value: 2 },
+      { label: "見えている", value: 0 }
+    ]
+  },
+  {
+    id: "emotion-fear",
+    key: "emotion",
+    text: "失敗そのものより、その後に自分を責めてしまいそうな怖さがありますか？",
+    options: [
+      { label: "かなりある", value: 3 },
+      { label: "少しある", value: 2 },
       { label: "あまりない", value: 0 }
     ]
   },
   {
-    id: "steps",
-    text: "最初の具体的な手順が曖昧で、着手点が見えませんか？",
+    id: "noise-interrupt",
+    key: "noise",
+    text: "通知、家の用事、周囲の気配で、思考が何度も途切れていますか？",
     options: [
-      { label: "かなり当てはまる", value: 3 },
-      { label: "少し当てはまる", value: 2 },
+      { label: "かなり途切れる", value: 3 },
+      { label: "少し途切れる", value: 2 },
       { label: "あまりない", value: 0 }
     ]
   },
   {
-    id: "emotion",
-    text: "不安、怖さ、気まずさ、失敗への抵抗がブレーキになっていますか？",
+    id: "perfect-rough",
+    key: "perfect",
+    text: "粗い状態を人に見せるくらいなら、まだ出さない方がいいと感じますか？",
     options: [
-      { label: "かなり当てはまる", value: 3 },
-      { label: "少し当てはまる", value: 2 },
+      { label: "かなり感じる", value: 3 },
+      { label: "少し感じる", value: 2 },
       { label: "あまりない", value: 0 }
     ]
   },
   {
-    id: "noise",
-    text: "通知、場所、時間、周囲の用事など、環境に集中を削られていますか？",
+    id: "priority-carrying",
+    key: "priority",
+    text: "今日やらないことまで、頭の中でずっと持ち続けている感じがありますか？",
     options: [
-      { label: "かなり当てはまる", value: 3 },
-      { label: "少し当てはまる", value: 2 },
+      { label: "かなりある", value: 3 },
+      { label: "少しある", value: 2 },
+      { label: "今は少ない", value: 0 }
+    ]
+  },
+  {
+    id: "expectation-pressure",
+    key: "expectation",
+    text: "誰かの期待に応えようとして、始める前から少し疲れていますか？",
+    options: [
+      { label: "かなり疲れる", value: 3 },
+      { label: "少し疲れる", value: 2 },
       { label: "あまりない", value: 0 }
     ]
   },
   {
-    id: "perfect",
-    text: "出す前から完成度を上げようとして、下書きや試作が止まっていますか？",
+    id: "holding-delegate",
+    key: "holding",
+    text: "本当は誰かに渡せることまで、自分だけで抱えている気がしますか？",
     options: [
-      { label: "かなり当てはまる", value: 3 },
-      { label: "少し当てはまる", value: 2 },
+      { label: "かなり抱えている", value: 3 },
+      { label: "少し抱えている", value: 2 },
       { label: "あまりない", value: 0 }
     ]
   },
   {
-    id: "priority",
-    text: "やることが複数あり、どれから触るべきか決めきれませんか？",
+    id: "ai-fatigue-output",
+    key: "aiFatigue",
+    text: "AIやツールの答えが増えるほど、選ぶ負荷が重くなっていますか？",
     options: [
-      { label: "かなり当てはまる", value: 3 },
-      { label: "少し当てはまる", value: 2 },
+      { label: "かなり重い", value: 3 },
+      { label: "少し重い", value: 2 },
+      { label: "あまりない", value: 0 }
+    ]
+  },
+  {
+    id: "emotion-visible",
+    key: "emotion",
+    text: "誰かに見られる前提になると、急に身体が固くなる感じがありますか？",
+    options: [
+      { label: "かなり固くなる", value: 3 },
+      { label: "少し固くなる", value: 2 },
+      { label: "あまりない", value: 0 }
+    ]
+  },
+  {
+    id: "steps-too-big",
+    key: "steps",
+    text: "やることが大きな塊のままで、5分サイズまで小さくできていない感じですか？",
+    options: [
+      { label: "かなり大きい", value: 3 },
+      { label: "少し大きい", value: 2 },
+      { label: "小さくできている", value: 0 }
+    ]
+  },
+  {
+    id: "info-open-tabs",
+    key: "info",
+    text: "開いた情報を閉じるタイミングが分からず、次の情報に移ってしまいますか？",
+    options: [
+      { label: "かなり移る", value: 3 },
+      { label: "少し移る", value: 2 },
+      { label: "あまりない", value: 0 }
+    ]
+  },
+  {
+    id: "priority-hidden",
+    key: "priority",
+    text: "本当に重いものを避けて、軽い用事から触ってしまうことがありますか？",
+    options: [
+      { label: "かなりある", value: 3 },
+      { label: "少しある", value: 2 },
+      { label: "あまりない", value: 0 }
+    ]
+  },
+  {
+    id: "expectation-kindness",
+    key: "expectation",
+    text: "相手をがっかりさせたくなくて、自分の余白を後回しにしていますか？",
+    options: [
+      { label: "かなり後回し", value: 3 },
+      { label: "少し後回し", value: 2 },
       { label: "あまりない", value: 0 }
     ]
   }
@@ -111,7 +210,10 @@ const keywordScores: Record<AnswerKey, string[]> = {
   emotion: ["怖", "不安", "恥", "失敗", "怒ら", "自信", "緊張", "気まず"],
   noise: ["通知", "忙", "時間がない", "集中", "邪魔", "疲", "場所", "家族"],
   perfect: ["完璧", "ちゃんと", "まだ出せ", "品質", "納得", "作り込", "不十分"],
-  priority: ["優先", "多すぎ", "タスク", "どれから", "全部", "整理", "重要", "管理崩壊"]
+  priority: ["優先", "多すぎ", "タスク", "どれから", "全部", "整理", "重要", "管理崩壊"],
+  expectation: ["期待", "応え", "評価", "がっかり", "ちゃんとしなきゃ", "責任", "プレッシャー"],
+  holding: ["抱え", "任せ", "頼れ", "相談", "全部自分", "手放", "依頼"],
+  aiFatigue: ["ai", "AI", "chatgpt", "ChatGPT", "プロンプト", "ツール", "生成", "回答が多"]
 };
 
 export const resultMap: Record<AnswerKey, DiagnosisResult> = {
@@ -164,7 +266,7 @@ export const resultMap: Record<AnswerKey, DiagnosisResult> = {
       "新しいことが怖いというより、否定されること、間違えること、自分を責めること。その後の感情処理が重くて、先に止まってしまう状態です。",
     commonActions: ["人に見せる前提だと止まる", "完璧な形を探してしまう", "「意味ある？」で急に手が止まる", "始める前に疲れた気持ちになる"],
     nextAction:
-      "今日は、「誰にも見せない前提」で5分だけ作ってみてください。完成ではなく、動いた痕跡だけで十分です。",
+      "今日は、「誰にも見せない前提」で5分だけ思考整理の時間を作ってください。完成ではなく、動いた痕跡だけで十分です。",
     needNow: "今必要なのは、やる気ではなく、「失敗しても大丈夫」と感じられる小さな安全地帯かもしれません。",
     doNow: ["誰にも出さない下書きを作る", "不安を1文で名前にする", "失敗しても戻せる範囲を決める"],
     avoid: "気合いで押し切ろうとして、さらに怖くすること。",
@@ -212,19 +314,94 @@ export const resultMap: Record<AnswerKey, DiagnosisResult> = {
     avoid: "全タスクを同じ重要度で抱えること。",
     lightLine: "全部を照らすより、次の一歩だけ明るければ進めます。",
     reassurance: "全部を今日抱えなくても、ひとつ選べたら前に進んでいます。"
+  },
+  expectation: {
+    type: "期待疲労タイプ",
+    summary: "やること自体よりも、期待に応え続ける緊張で消耗しています。",
+    stateTranslation:
+      "期待されていることが嫌なのではなく、応えられなかった時の空気や、自分への失望を先に想像して疲れている状態かもしれません。",
+    commonActions: ["頼まれると断る前に引き受ける", "相手の反応を考えすぎる", "期待値を下げる説明ができない", "始める前から失敗後の空気を想像する"],
+    nextAction:
+      "今日は、相手に見せる完成形ではなく、自分用の確認メモを3行だけ作ってください。期待に応える前に、まず自分の現在地を置ければ十分です。",
+    needNow: "今必要なのは、期待に追いつく力ではなく、期待から少し距離を取れる小さな余白かもしれません。",
+    doNow: ["自分用メモを3行書く", "今すぐ応えない返事を用意する", "期待値を1段下げる言葉を置く"],
+    avoid: "相手の反応まで背負ったまま着手すること。",
+    lightLine: "誰かの期待より先に、自分の呼吸を戻していい。",
+    reassurance: "応えきれない日があっても、あなたが不誠実なわけではありません。"
+  },
+  holding: {
+    type: "抱え込み停止タイプ",
+    summary: "手放せるものまで持ち続けて、動く余白がなくなっています。",
+    stateTranslation:
+      "自分でやる方が早い、説明する方が面倒。そう思うほど、作業だけでなく判断や責任まで一人に集まりやすくなります。",
+    commonActions: ["頼む前に自分で処理してしまう", "説明する時間が惜しくて抱える", "途中の状態を見せるのが苦手", "誰かに渡せる粒度まで分けられない"],
+    nextAction:
+      "今日は、全部を頼むのではなく「確認だけお願いできること」を1つ書いてください。渡す準備ではなく、渡せる場所を見つけるだけで十分です。",
+    needNow: "今必要なのは、全部を片づける力ではなく、少しだけ外に置ける境界線かもしれません。",
+    doNow: ["確認だけ頼めることを1つ書く", "自分でなくてもよい作業に印をつける", "途中の状態を1つ残す"],
+    avoid: "説明できる形になるまで一人で整え続けること。",
+    lightLine: "灯りは、ひとりで持ち続けなくても消えません。",
+    reassurance: "手放すことは、責任を捨てることではありません。"
+  },
+  aiFatigue: {
+    type: "AI疲れタイプ",
+    summary: "答えを増やすほど、選ぶ負荷と焦りが強くなっています。",
+    stateTranslation:
+      "AIが便利だからこそ、候補、改善案、別案が一気に増えます。使えていないのではなく、生成された選択肢を受け止める器が先にいっぱいになっている状態です。",
+    commonActions: ["プロンプトを直すほど迷いが増える", "複数案を見て結局選べない", "他の人のAI活用を見て焦る", "出力を読んだだけで作業した気になる"],
+    nextAction:
+      "今日は、AIに聞く前に「欲しい答えの形」を1行だけ書いてください。その1行に合わない出力は、読まずに閉じて大丈夫です。",
+    needNow: "今必要なのは、さらに賢い使い方ではなく、受け取る量を小さくする入口かもしれません。",
+    doNow: ["欲しい答えの形を1行で書く", "出力は1案だけ読む", "次に使う条件を先に決める"],
+    avoid: "不安を減らすために、さらに別案を生成し続けること。",
+    lightLine: "道具の光が強すぎる時は、少しだけ絞っていい。",
+    reassurance: "AIを使いこなせない日があっても、置いていかれているわけではありません。"
   }
 };
 
-export function diagnose(problem: string, answers: Partial<Record<AnswerKey, number>>): DiagnosisResult {
+function createInputReflection(problem: string, result: DiagnosisResult): string {
+  const cleaned = problem.replace(/\s+/g, " ").trim();
+  if (!cleaned) {
+    return "まだ言葉になりきっていない詰まりを、ここに少しだけ置こうとしている状態です。";
+  }
+
+  const clipped = cleaned.length > 42 ? `${cleaned.slice(0, 42)}...` : cleaned;
+  return `入力してくれた「${clipped}」には、${result.summary}という流れが少し見えています。まずは全部を説明しきらなくて大丈夫です。`;
+}
+
+function createQuietQuestion(result: DiagnosisResult): string {
+  if (result.type === "感情ブレーキタイプ") {
+    return "もし誰にも見せなくていいなら、最初に少しだけ置けそうなものは何でしょう。";
+  }
+  if (result.type === "情報過多タイプ" || result.type === "AI疲れタイプ") {
+    return "これ以上増やす前に、今あるものの中で一番軽く閉じられるものは何でしょう。";
+  }
+  if (result.type === "抱え込み停止タイプ") {
+    return "全部ではなく、確認だけ誰かに渡せる部分はどこでしょう。";
+  }
+  if (result.type === "期待疲労タイプ") {
+    return "期待に応える前に、自分の現在地として認めてもいいことは何でしょう。";
+  }
+  return "今の自分に、いちばん小さく渡せる一手は何でしょう。";
+}
+
+export function diagnose(problem: string, answers: Partial<Record<string, number>>): PersonalizedDiagnosis {
   const scores: Record<AnswerKey, number> = {
-    info: answers.info ?? 0,
-    decision: answers.decision ?? 0,
-    steps: answers.steps ?? 0,
-    emotion: answers.emotion ?? 0,
-    noise: answers.noise ?? 0,
-    perfect: answers.perfect ?? 0,
-    priority: answers.priority ?? 0
+    info: 0,
+    decision: 0,
+    steps: 0,
+    emotion: 0,
+    noise: 0,
+    perfect: 0,
+    priority: 0,
+    expectation: 0,
+    holding: 0,
+    aiFatigue: 0
   };
+
+  for (const question of questions) {
+    scores[question.key] += answers[question.id] ?? 0;
+  }
 
   const normalized = problem.toLowerCase();
   for (const [key, keywords] of Object.entries(keywordScores) as Array<[AnswerKey, string[]]>) {
@@ -235,11 +412,27 @@ export function diagnose(problem: string, answers: Partial<Record<AnswerKey, num
     }
   }
 
-  const priorityOrder: AnswerKey[] = ["emotion", "noise", "steps", "priority", "decision", "perfect", "info"];
+  const priorityOrder: AnswerKey[] = [
+    "emotion",
+    "expectation",
+    "holding",
+    "aiFatigue",
+    "noise",
+    "steps",
+    "priority",
+    "decision",
+    "perfect",
+    "info"
+  ];
   const winner = priorityOrder.reduce((best, key) => {
     if (scores[key] > scores[best]) return key;
     return best;
   }, "steps" as AnswerKey);
 
-  return resultMap[winner];
+  const result = resultMap[winner];
+  return {
+    ...result,
+    inputReflection: createInputReflection(problem, result),
+    quietQuestion: createQuietQuestion(result)
+  };
 }

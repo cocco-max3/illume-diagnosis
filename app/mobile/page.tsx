@@ -118,8 +118,15 @@ const mobileJs = `
     return '今の自分に、いちばん小さく渡せる一手は何でしょう。';
   }
 
+  function pickNextAction(r) {
+    if (!r.nextActionVariants || !r.nextActionVariants.length) return r.nextAction;
+    const index = Math.floor(Math.random() * r.nextActionVariants.length);
+    return r.nextActionVariants[index];
+  }
+
   function showResult() {
     const r = results[diagnose()];
+    const nextAction = pickNextAction(r);
     form.classList.add('hide');
     result.classList.remove('hide');
     document.getElementById('rtype').textContent = r.type;
@@ -133,7 +140,7 @@ const mobileJs = `
       li.textContent = item;
       common.appendChild(li);
     });
-    document.getElementById('raction').textContent = r.nextAction;
+    document.getElementById('raction').textContent = nextAction;
     document.getElementById('rneed').textContent = r.needNow;
     document.getElementById('rquestion').textContent = quietQuestion(r);
     document.getElementById('rre').textContent = r.reassurance;

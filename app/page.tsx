@@ -14,15 +14,28 @@ export default function Home() {
   const [answers, setAnswers] = useState<Answers>({});
   const [submitted, setSubmitted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [actionVariant, setActionVariant] = useState(0);
 
   const answeredCount = questions.filter((question) => answers[question.id] !== undefined).length;
   const isComplete = problem.trim().length > 0 && answeredCount === questions.length;
   const result = useMemo(() => diagnose(problem, answers), [problem, answers]);
+  const displayResult = useMemo(() => {
+    if (!result.nextActionVariants?.length) return result;
+    return {
+      ...result,
+      nextAction: result.nextActionVariants[actionVariant % result.nextActionVariants.length]
+    };
+  }, [result, actionVariant]);
   const resetDiagnosis = () => {
     setProblem("");
     setAnswers({});
     setSubmitted(false);
     setCurrentQuestion(0);
+    setActionVariant(0);
+  };
+  const showResult = () => {
+    setActionVariant(Math.floor(Math.random() * 20));
+    setSubmitted(true);
   };
 
   return (
@@ -55,6 +68,7 @@ export default function Home() {
               isComplete={isComplete}
               answeredCount={answeredCount}
               resetDiagnosis={resetDiagnosis}
+              showResult={showResult}
             />
           </div>
 
@@ -132,7 +146,7 @@ export default function Home() {
             <button
               type="button"
               disabled={!isComplete}
-              onClick={() => setSubmitted(true)}
+              onClick={showResult}
               className="primary-action w-full rounded-md bg-illume-blue px-6 py-4 text-sm font-bold text-illume-gold shadow-glow transition hover:bg-illume-moonblue disabled:cursor-not-allowed disabled:bg-illume-blue/[0.28] disabled:text-illume-blue/[0.55] disabled:shadow-none sm:w-auto sm:py-3"
             >
               小さな灯りを出す
@@ -169,7 +183,7 @@ export default function Home() {
               </div>
 
               <div className="relative rounded-lg border border-illume-gold/30 bg-[#071426] p-5 shadow-xl shadow-black/20 backdrop-blur">
-                <ResultCard problem={problem} result={result} />
+                <ResultCard problem={problem} result={displayResult} />
               </div>
             </div>
           </div>
@@ -192,6 +206,7 @@ type MobileFlowProps = {
   isComplete: boolean;
   answeredCount: number;
   resetDiagnosis: () => void;
+  showResult: () => void;
 };
 
 function MobileFlow({
@@ -205,7 +220,8 @@ function MobileFlow({
   setCurrentQuestion,
   isComplete,
   answeredCount,
-  resetDiagnosis
+  resetDiagnosis,
+  showResult
 }: MobileFlowProps) {
   const question = questions[currentQuestion];
   const canAnswer = problem.trim().length > 0;
@@ -297,7 +313,7 @@ function MobileFlow({
       )}
 
       {canAnswer && isComplete && !submitted && (
-        <button type="button" onClick={() => setSubmitted(true)} className="mobile-light-button">
+        <button type="button" onClick={showResult} className="mobile-light-button">
           今日の小さな灯りを見る
         </button>
       )}
